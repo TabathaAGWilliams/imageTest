@@ -37,22 +37,28 @@ sobel_x = cv2.convertScaleAbs(sobel_x)
 sobel_y = cv2.convertScaleAbs(sobel_y)
 magnitude = cv2.convertScaleAbs(magnitude)
 
-_, binary = cv2.threshold(magnitude, 127, 255, cv2.THRESH_BINARY)
+gray = cv2.cvtColor(magnitude, cv2.COLOR_BGR2GRAY)
+_, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
 
 # Convert to boolean image
 binary_bool = binary > 0
 
 # Skeletonize
 skeleton = skeletonize(binary_bool)
-
 # Convert back to uint8
 skeleton_image = (skeleton * 255).astype(np.uint8)
+
+# Count
+num_labels, labels = cv2.connectedComponents(skeleton_image)
+
+print("Shapes:", num_labels - 1)
 
 cv2.imshow("Original", image)
 cv2.imshow("Sobel x", sobel_x)
 cv2.imshow("Sobel y", sobel_y)
 cv2.imshow("Magnitude", magnitude)
 cv2.imshow("Skeleton", skeleton_image)
+
 
 cv2.waitKey(0)
 cv2.destroyAllWindows()
